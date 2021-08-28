@@ -26,5 +26,29 @@
 </p>
 <img src="adsbmode.png">
 
-<h2><b></b></h2>
+<h2><b>Analyse d'une trame ADS-B</b></h2>
+<pre>
++----------+----------+-------------+------------------------+-----------+
+|  DF (5)  |  CA (3)  |  ICAO (24)  |         ME (56)        |  PI (24)  |
++----------+----------+-------------+------------------------+-----------+
+</pre>
 
+Reste de l'explication quand j'ai le temps....
+
+
+<h2>Utilisation du ADS-B décodeur</h2>
+
+<p>
+    Pour le moment je n'ai implémenté que la partie decoding du TC, CA, et Nom de l'appareil. Prochainement j'implémenterais la position.
+</p>
+
+```ruby
+
+dec = ADS_B::Decoder.new
+error, tc, ca, name = dec.decode(0x8D4840D6202CC371C32CE0576098)
+
+puts "Infos ADS-B -> 0x8D4840D6202CC371C32CE0576098"
+puts "Nom appareil => #{name}" # KLM1023_
+puts "Type de code => #{tc}" # 4
+puts "Catégorie => #{ca}" # 0
+```

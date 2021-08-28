@@ -55,6 +55,34 @@ module ADS_B
         ////////////////////////////
 =end
 
+        def parse_position_me_trame(me_trame)
+            return me_trame[0..4],me_trame[5..6], 
+                   me_trame[7], me_trame[8..19], 
+                   me_trame[20], me_trame[21],
+                   me_trame[22..38], me_trame[39..55]
+        end
+
+        def global_unambiguous_position(me1, me2)
+            tc1, ss1, saf1, alt1, t1, f1, lat_pcr1, long_pcr1 = self.parse_position_me_trame(me1.to_s(2))
+            tc2, ss2, saf2, alt2, t2, f2, lat_pcr2, long_pcr2 = self.parse_position_me_trame(me2.to_s(2))
+            # extract position fraction1
+            lat_cpr_even = lat_pcr1.to_i(2)/2**17
+            long_cpr_even = long_pcr1.to_i(2)/2**17
+            # extract position fraction2
+            lat_cpr_odd = lat_pcr2.to_i(2)/2**17
+            long_cpr_odd = long_pcr2.to_i(2)/2**17
+            #calculate hint of lat
+            j = (59*lat_cpr_even-60*long_cpr_even+1/2).floor
+            puts j
+        end
+
+        def decode_position(trame_even, trame_odd)
+            df_even, ca_even, icao_even, me_even, pi_even = self.parse_segment_msg(trame_even)
+            df_odd, ca_odd, icao_odd, me_odd, pi_odd = self.parse_segment_msg(trame_odd)
+
+            global_unambiguous_position(me_even, me_odd)
+        end
+
 
 
 =begin
@@ -69,7 +97,6 @@ module ADS_B
                 if(self.is_identification_tc(me))
                     return (error, tc, ca, name = self.decode_icao_value(me))
                 end
-
             else
                 return "NOT_VALID_LENGTH_TRAME", nil
             end
@@ -77,11 +104,6 @@ module ADS_B
     end
 end
 
+
 dec = ADS_B::Decoder.new
-error, tc, ca, name = dec.decode(0x8D4840D6202CC371C32CE0576098)
-
-puts "Infos ADS-B -> 0x8D4840D6202CC371C32CE0576098"
-puts "Nom appareil => #{name}"
-puts "Type de code => #{tc}"
-puts "Catégorie => #{ca}"
-
+dec.global_unambiguous_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
