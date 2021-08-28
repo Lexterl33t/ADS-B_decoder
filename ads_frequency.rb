@@ -66,7 +66,7 @@ module ADS_B
         end
 
         def nl(lat)
-            return ((2*Math::PI)/(Math.acos(1-((1-Math.cos(Math::PI/(2*15)))/(Math.cos((Math::PI/180)*52.2572021484375)**2))))).floor
+            return ((2*Math::PI)/(Math.acos(1-((1-Math.cos(Math::PI/(2*15)))/(Math.cos((Math::PI/180)*lat)**2))))).floor
         end
 
         def global_unambiguous_position(me1, me2)
@@ -99,7 +99,7 @@ module ADS_B
             dLat = (360/60)
             #Equation to get latitude zone index
             j = (lat_ref/dLat).floor + (((lat_ref%dLat)/dLat)-(lat_pcr1.to_i(2)/2**17)+(1/2)).floor
-            lat = dLat*(j+(lat_pcr1.to_i(2).to_f/2**17))
+            lat = dLat*(j+(lat_pcr1.to_i(2)/2**17))
             puts lat
         end
 

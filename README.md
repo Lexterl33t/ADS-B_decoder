@@ -41,6 +41,7 @@ Reste de l'explication quand j'ai le temps....
 <p>
     Pour le moment je n'ai implémenté que la partie decoding du TC, CA, et Nom de l'appareil. Prochainement j'implémenterais la position.
 </p>
+Decoding identification trame
 
 ```ruby
 
@@ -51,4 +52,14 @@ puts "Infos ADS-B -> 0x8D4840D6202CC371C32CE0576098"
 puts "Nom appareil => #{name}" # KLM1023_
 puts "Type de code => #{tc}" # 4
 puts "Catégorie => #{ca}" # 0
+```
+
+Decoding trame global position non ambigue
+
+```ruby
+dec = ADS_B::Decoder.new
+lat, long = dec.decode_position_globally()
+
+puts "latitude: #{lat}"
+puts "longitude: #{long}"
 ```
