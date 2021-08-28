@@ -62,18 +62,18 @@ module ADS_B
                    me_trame[22..38], me_trame[39..55]
         end
 
+        def mod(x, y)
+            return x-y*((x/y).floor)
+        end
+
         def global_unambiguous_position(me1, me2)
-            tc1, ss1, saf1, alt1, t1, f1, lat_pcr1, long_pcr1 = self.parse_position_me_trame(me1.to_s(2))
-            tc2, ss2, saf2, alt2, t2, f2, lat_pcr2, long_pcr2 = self.parse_position_me_trame(me2.to_s(2))
-            # extract position fraction1
-            lat_cpr_even = lat_pcr1.to_i(2)/2**17
-            long_cpr_even = long_pcr1.to_i(2)/2**17
-            # extract position fraction2
-            lat_cpr_odd = lat_pcr2.to_i(2)/2**17
-            long_cpr_odd = long_pcr2.to_i(2)/2**17
+            tc1, ss1, saf1, alt1, t1, f1, lat_pcr1, long_pcr1 = self.parse_position_me_trame(me1)
+            tc2, ss2, saf2, alt2, t2, f2, lat_pcr2, long_pcr2 = self.parse_position_me_trame(me2)
             #calculate hint of lat
-            j = (59*lat_cpr_even-60*long_cpr_even+1/2).floor
-            puts j
+            j = (59*lat_pcr1.to_i(2)/2**17-60*lat_pcr2.to_i(2)/2**17+1/2).floor
+            #decode lat even
+            lat_even = 360/4*15*(mod(j, 60)+lat_pcr1.to_i(2))
+            puts lat_even
         end
 
         def decode_position(trame_even, trame_odd)
@@ -106,4 +106,4 @@ end
 
 
 dec = ADS_B::Decoder.new
-dec.global_unambiguous_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
+dec.decode_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
