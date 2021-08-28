@@ -195,6 +195,21 @@ module ADS_B
         /////////////////////////////////
 =end 
 
+
+=begin
+        ///////////////////////////////
+        ////   Position trame    ////
+        ////////////////////////////
+=end
+
+
+
+=begin
+        ///////////////////////////////
+        ////  End Position trame  ////
+        ////////////////////////////
+=end
+
         def decode(msg)
             if(msg.to_s(2).length == 112)
                 df, ca, icao, me, pi = self.parse_segment_msg(msg)
