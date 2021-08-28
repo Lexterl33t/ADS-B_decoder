@@ -75,8 +75,8 @@ module ADS_B
             #calculate hint of lat
             j = (59*lat_pcr1.to_i(2)/2**17-60*lat_pcr2.to_i(2)/2**17+1/2).floor
             #decode lat even
-            lat_even = (360/60.to_f)*((8%60)+lat_pcr1.to_i(2)/(2**17).to_f)
-            lat_odd = (360/59.to_f)*((8%59)+lat_pcr2.to_i(2)/(2**17).to_f)
+            lat_even = (360/60.to_f)*((j%60)+lat_pcr1.to_i(2)/(2**17).to_f)
+            lat_odd = (360/59.to_f)*((j%59)+lat_pcr2.to_i(2)/(2**17).to_f)
             lat = lat_even
             if(nl(lat) == nl(lat_odd))
                 m = (long_pcr1.to_i(2)/2**17*(nl(lat)-1)-long_pcr2.to_i(2)/2**17*nl(lat)+1/2).floor
@@ -86,11 +86,21 @@ module ADS_B
             end
         end
 
-        def decode_position(trame_even, trame_odd)
+        def decode_position_globally(trame_even, trame_odd)
             df_even, ca_even, icao_even, me_even, pi_even = self.parse_segment_msg(trame_even)
             df_odd, ca_odd, icao_odd, me_odd, pi_odd = self.parse_segment_msg(trame_odd)
 
             return global_unambiguous_position(me_even, me_odd)
+        end
+
+
+        def decode_locally_unambiguous_position(trame, lat_ref, long_ref)
+            tc1, ss1, saf1, alt1, t1, f1, lat_pcr1, long_pcr1 = self.parse_position_me_trame(trame.to_s(2))
+            dLat = (360/60)
+            #Equation to get latitude zone index
+            j = (lat_ref/dLat).floor + (((lat_ref%dLat)/dLat)-(lat_pcr1.to_i(2)/2**17)+(1/2)).floor
+            lat = dLat*(j+(lat_pcr1.to_i(2).to_f/2**17))
+            puts lat
         end
 
 
@@ -116,7 +126,4 @@ end
 
 
 dec = ADS_B::Decoder.new
-lat, long = dec.decode_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
-
-puts "Lattitude => #{lat}"
-puts "Longitude => #{long}"
+dec.decode_locally_unambiguous_position(0x8D40621D58C382D690C8AC2863A7, 52.258, 3.918)
