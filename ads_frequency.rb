@@ -1,5 +1,4 @@
 
-
 module ADS_B
     class Decoder
         def parse_segment_msg(msg)
@@ -66,21 +65,32 @@ module ADS_B
             return x-y*((x/y).floor)
         end
 
+        def nl(lat)
+            return ((2*Math::PI)/(Math.acos(1-((1-Math.cos(Math::PI/(2*15)))/(Math.cos((Math::PI/180)*52.2572021484375)**2))))).floor
+        end
+
         def global_unambiguous_position(me1, me2)
             tc1, ss1, saf1, alt1, t1, f1, lat_pcr1, long_pcr1 = self.parse_position_me_trame(me1)
             tc2, ss2, saf2, alt2, t2, f2, lat_pcr2, long_pcr2 = self.parse_position_me_trame(me2)
             #calculate hint of lat
             j = (59*lat_pcr1.to_i(2)/2**17-60*lat_pcr2.to_i(2)/2**17+1/2).floor
             #decode lat even
-            lat_even = 360/4*15*(mod(j, 60)+lat_pcr1.to_i(2))
-            puts lat_even
+            lat_even = (360/60.to_f)*((8%60)+lat_pcr1.to_i(2)/(2**17).to_f)
+            lat_odd = (360/59.to_f)*((8%59)+lat_pcr2.to_i(2)/(2**17).to_f)
+            lat = lat_even
+            if(nl(lat) == nl(lat_odd))
+                m = (long_pcr1.to_i(2)/2**17*(nl(lat)-1)-long_pcr2.to_i(2)/2**17*nl(lat)+1/2).floor
+                n = [nl(lat), 1].max
+                long = (360/n.to_f)*((m%n)+long_pcr1.to_i(2)/(2**17).to_f)
+                return lat, long
+            end
         end
 
         def decode_position(trame_even, trame_odd)
             df_even, ca_even, icao_even, me_even, pi_even = self.parse_segment_msg(trame_even)
             df_odd, ca_odd, icao_odd, me_odd, pi_odd = self.parse_segment_msg(trame_odd)
 
-            global_unambiguous_position(me_even, me_odd)
+            return global_unambiguous_position(me_even, me_odd)
         end
 
 
@@ -106,4 +116,7 @@ end
 
 
 dec = ADS_B::Decoder.new
-dec.decode_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
+lat, long = dec.decode_position(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
+
+puts "Lattitude => #{lat}"
+puts "Longitude => #{long}"
