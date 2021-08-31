@@ -58,7 +58,7 @@ Decoding trame global position non ambigue
 
 ```ruby
 dec = ADS_B::Decoder.new
-lat, long = dec.decode_position_globally()
+lat, long = dec.decode_position_globally(0x8D40621D58C382D690C8AC2863A7, 0x8D40621D58C386435CC412692AD6)
 
 puts "latitude: #{lat}"
 puts "longitude: #{long}"
