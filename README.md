@@ -16,7 +16,7 @@
     Pour se faire je ne vais pas m'attarder sur le côté technique manuelle de la chose, mais il vous faut un outil vous permettant d'intercépter des frequences, tel que le RTL-SDR qui le fait très bien. Il faudra également une antenne réglé sous une fréquence de <b>1090MHz</b>, c'est la fréquence émise par le transpondeur de l'avion. En revanche l'avion n'envoit pas qu'un seul type de transmission. Aujourd'hui les avions utilisent une methode de transmission appelé <b>mode S</b> celui-ci permet une interrogation selective. 
 </p>
 <img src="modes.png">
-<h2><b>Comment détecter que c'est une transmission ADS-B ?</b></h2>
+<h2><b>Comment détecter une transmission ADS-B ?</b></h2>
 <p>
     En effet dans le mode S il existe plusieurs type, ainsi que leur type de liaison. On peut y voir que dans le tableau ci-dessus. Les modes necessitant une intérrogation et ceux ne nécessitant aucune intérrogation. Si l'on analyse bien le tableau il existe trois format intéressant qui sont 17-18-19.
     Les trois modes sont intéressant ils ne nécessitent aucune interrogation de la part du SSR.
