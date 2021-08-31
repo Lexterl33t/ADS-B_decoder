@@ -1,50 +1,45 @@
-<h1>ADS-B Decoder - Ruby</h1>
+# ADS-B Decoder - Ruby
 
-<p>
-    Aujourd'hui on je vous présente l'utilisation et le fonctionnement de mon décodeur ADS-B.
-</p>
+Today I present to you the use and operation of my ADS-B decoder. 
 
-<h2><b>C'est quoi l'ADS-B ?</b></h2>
-<p>
-    L'ADS-B pour Automatic dependent surveillance-broadcast est un système de surveillance, par satélite, pour obtenir des informations sur le trafique aerien. Contrairement aux autres signaux celui-ci n'attend aucune intérrogation. Sa position est fixé via un sattélite.
-</p>
+## What is ADS-B?
 
-<img src="explained.jpg">
+ADS-B for Automatic Dependent Surveillance-Broadcast is a satellite surveillance system for obtaining information on air traffic. Unlike other signals, this one does not wait for any interrogation. Its position is fixed via a satellite. 
 
-<h2><b>Comment réceptionner la transmision ADS-B ?</b></h2>
-<p>
-    Pour se faire je ne vais pas m'attarder sur le côté technique manuelle de la chose, mais il vous faut un outil vous permettant d'intercépter des frequences, tel que le RTL-SDR qui le fait très bien. Il faudra également une antenne réglé sous une fréquence de <b>1090MHz</b>, c'est la fréquence émise par le transpondeur de l'avion. En revanche l'avion n'envoit pas qu'un seul type de transmission. Aujourd'hui les avions utilisent une methode de transmission appelé <b>mode S</b> celui-ci permet une interrogation selective. 
-</p>
-<img src="modes.png">
-<h2><b>Comment détecter une transmission ADS-B ?</b></h2>
-<p>
-    En effet dans le mode S il existe plusieurs type, ainsi que leur type de liaison. On peut y voir que dans le tableau ci-dessus. Les modes necessitant une intérrogation et ceux ne nécessitant aucune intérrogation. Si l'on analyse bien le tableau il existe trois format intéressant qui sont 17-18-19.
-    Les trois modes sont intéressant ils ne nécessitent aucune interrogation de la part du SSR.
-    <br>
-    <br>
-    Cela veut dire que les format là sont envoyé de manière automatique par l'avion tout comme notre technologie ADS-B. Pour détecter si il s'agit d'une transmission ADS-B il suffit de regarder les 3 premiers bits de notre "ME" qui est un segment de 56 bits envoyé dans la trame ADS-B.
-</p>
-<img src="adsbmode.png">
+![](explained.jpg)
 
-<h2><b>Analyse d'une trame ADS-B</b></h2>
-<pre>
+## How to receive ADS-B transmission?
+
+To do so, I won't dwell on the manual technical side of the thing, but you need a tool allowing you to intercept frequencies, such as the RTL-SDR which does it very well. You will also need an antenna set under a frequency of <b> 1090MHz </b>, this is the frequency emitted by the aircraft's transponder. On the other hand, the plane does not send only one type of transmission. Today planes use a transmission method called <b> mode S </b> which allows selective interrogation. 
+
+![](modes.png)
+
+## How to detect an ADS-B transmission?
+
+Indeed in the S mode there are several types, as well as their type of connection. It can be seen only in the table above. The modes requiring an interrogation and those requiring no interrogation. If we analyze the table well there are three interesting formats which are 17-18-19.
+The three modes are interesting they do not require any interrogation from the SSR.
+
+This means that the formats there are sent automatically by the aircraft just like our ADS-B technology. To detect if this is an ADS-B transmission, just look at the first 3 bits of our "ME" which is a 56-bit segment sent in the ADS-B frame. 
+
+![](adsbmode.png)
+
+## Analysis of an ADS-B frame 
+
+```
 +----------+----------+-------------+------------------------+-----------+
 |  DF (5)  |  CA (3)  |  ICAO (24)  |         ME (56)        |  PI (24)  |
 +----------+----------+-------------+------------------------+-----------+
-</pre>
+```
 
-Reste de l'explication quand j'ai le temps....
+Rest of the explanation when I have time ... 
 
+## Using the ADS-B decoder
 
-<h2>Utilisation du ADS-B décodeur</h2>
+For the moment I have only implemented the decoding part of TC, CA, and Device name. Soon I will implement the position.
 
-<p>
-    Pour le moment je n'ai implémenté que la partie decoding du TC, CA, et Nom de l'appareil. Prochainement j'implémenterais la position.
-</p>
-Decoding identification trame
+Decoding frame identification: 
 
 ```ruby
-
 dec = ADS_B::Decoder.new
 error, tc, ca, name = dec.decode(0x8D4840D6202CC371C32CE0576098)
 
@@ -54,7 +49,7 @@ puts "Type de code => #{tc}" # 4
 puts "Catégorie => #{ca}" # 0
 ```
 
-Decoding trame global position non ambigue
+Global frame decoding unambiguous position: 
 
 ```ruby
 dec = ADS_B::Decoder.new
