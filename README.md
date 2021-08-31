@@ -6,7 +6,7 @@
 
 <h2><b>C'est quoi l'ADS-B ?</b></h2>
 <p>
-    L'ADS-B pour Automatic dependent surveillance-broadcast est un système de surveillance, par sattélite, pour obtenir des informations sur le trafique aerien. Contrairement aux autres signaux celui-ci n'attend aucune intérrogation. Sa position est fixé via un sattélite.
+    L'ADS-B pour Automatic dependent surveillance-broadcast est un système de surveillance, par satélite, pour obtenir des informations sur le trafique aerien. Contrairement aux autres signaux celui-ci n'attend aucune intérrogation. Sa position est fixé via un sattélite.
 </p>
 
 <img src="explained.jpg">
